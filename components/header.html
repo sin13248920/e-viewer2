@@ -1,9 +1,14 @@
 <div class="header">
   <div class="header-inner">
 
-    <div class="logo-group" onclick="location.href='index.html'">
+    <!-- 왼쪽: 로고 -->
+    <div class="logo" onclick="location.href='index.html'">
       <img src="https://drive.google.com/thumbnail?id=1lFUKv4ZpRblOeLCLD8aUp11aR952kQdj&sz=w1000">
-      <span class="header-title">스토리가 있는 서오 전문지</span>
+    </div>
+
+    <!-- 오른쪽: 텍스트 -->
+    <div class="header-title">
+      스토리가 있는 서오 전문지
     </div>
 
   </div>
@@ -23,26 +28,22 @@
 
   display: flex;
   align-items: center;
-}
-
-/* 로고 + 텍스트 묶음 */
-.logo-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
+  justify-content: space-between; /* ✔ 핵심 */
 }
 
 /* 로고 */
-.logo-group img {
+.logo img {
   height: 34px;
+  cursor: pointer;
 }
 
-/* 텍스트 */
+/* 텍스트 (오른쪽 정렬 느낌) */
 .header-title {
   font-size: 14px;
   color: #222;
   font-weight: 600;
   letter-spacing: 0.2px;
+
+  text-align: right;
 }
 </style>
