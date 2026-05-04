@@ -20,6 +20,7 @@ html, body {
   background: #fff;
 }
 
+/* HEADER */
 .header {
   padding: 10px 20px;
   border-bottom: 1px solid #ddd;
@@ -30,6 +31,7 @@ html, body {
   cursor: pointer;
 }
 
+/* VIEWER */
 .viewer {
   flex: 1;
   display: flex;
@@ -42,6 +44,15 @@ iframe {
   height: 80vh;
   border: none;
 }
+
+/* FOOTER */
+.footer {
+  padding: 10px;
+  background: #fafafa;
+  border-top: 1px solid #ddd;
+  font-size: 12px;
+  text-align: center;
+}
 </style>
 </head>
 
@@ -49,13 +60,21 @@ iframe {
 
 <div id="app">
 
+  <!-- HEADER -->
   <div class="header">
-    <img src="https://drive.google.com/thumbnail?id=1lFUKv4ZpRblOeLCLD8aUp11aR952kQdj&sz=w1000"
-         onclick="location.href='index.html'">
+    <button onclick="location.href='index.html'">⬅ 목록으로</button>
   </div>
 
+  <!-- VIEWER -->
   <div class="viewer">
     <iframe src="https://drive.google.com/file/d/1S94VEwUqHhRLyCjxZpLcRbsL83ktm3xw/preview"></iframe>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>[02565] 서오시 용산구 서오중앙로 34(서오동)</p>
+    <p>대표번호 : 02-1234-5678 | 02-0987-6543 | 02-0987-4321</p>
+    <p>FAX : 02-1234-0987</p>
   </div>
 
 </div>
