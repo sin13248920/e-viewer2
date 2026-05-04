@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>월간00 e뷰어</title>
+<title>월간서오 e뷰어</title>
 
 <style>
 html, body {
@@ -13,17 +13,15 @@ html, body {
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* 🔥 자유 레이아웃 */
 #app {
   width: 100%;
   min-height: 100vh;
-  margin: auto;
   background: #fff;
   display: flex;
   flex-direction: column;
 }
 
-/* 헤더 */
+/* HEADER */
 .header {
   padding: 10px 20px;
   border-bottom: 1px solid #ddd;
@@ -34,7 +32,6 @@ html, body {
 
 .header img {
   height: 50px;
-  cursor: pointer;
 }
 
 .header-text {
@@ -42,24 +39,21 @@ html, body {
   color: black;
 }
 
-/* 콘텐츠 */
+/* CONTENT */
 .content {
   flex: 1;
-  padding-bottom: 40px;
 }
 
-/* 홈 */
 .grid {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 60px;
   min-height: 60vh;
-  margin: 0 auto;
   padding-top: 40px;
 }
 
-/* 카드 */
+/* CARD */
 .card {
   width: 200px;
   cursor: pointer;
@@ -85,7 +79,7 @@ html, body {
   text-align: center;
 }
 
-/* 배지 */
+/* BADGE */
 .badge, .badge-coming {
   position: absolute;
   top: 10px;
@@ -99,80 +93,13 @@ html, body {
 .badge { background: red; }
 .badge-coming { background: gray; }
 
-/* 화면 */
-.screen {
-  display: none;
-  min-height: 60vh;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.screen.active {
-  display: flex;
-  opacity: 1;
-}
-
-/* 뷰어 */
-#viewer {
-  justify-content: center;
-  align-items: center;
-}
-
-.viewer-container {
-  width: 90%;
-  height: 70vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.toolbar {
-  padding: 10px;
-  background: #f0f0f0;
-}
-
-/* 버튼 애니메이션 */
-button {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: none;
-  background: #e5e5e5;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-}
-
-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  background: #dcdcdc;
-}
-
-button:active {
-  transform: scale(0.92);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
-iframe {
-  flex: 1;
-  width: 100%;
-  border: none;
-}
-
-/* Coming */
-#coming {
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  font-size: 24px;
-}
-
-/* 푸터 */
+/* FOOTER */
 .footer {
   padding: 10px;
   background: #fafafa;
   border-top: 1px solid #ddd;
   font-size: 12px;
   text-align: center;
-  line-height: 1.3;
 }
 
 .footer p {
@@ -184,23 +111,11 @@ iframe {
   margin-bottom: 5px;
 }
 
-/* 모바일 */
+/* MOBILE */
 @media (max-width: 768px) {
-
-  body {
-    overflow-y: auto;
-  }
-
-  #app {
-    min-height: 100vh;
-  }
-
   .grid {
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     gap: 30px;
-    padding-top: 30px;
   }
 
   .card {
@@ -214,10 +129,6 @@ iframe {
   .header-text {
     font-size: 12px;
   }
-
-  .viewer-container {
-    height: 60vh;
-  }
 }
 </style>
 </head>
@@ -226,91 +137,53 @@ iframe {
 
 <div id="app">
 
+  <!-- HEADER -->
   <div class="header">
-    <img src="https://drive.google.com/thumbnail?id=1lFUKv4ZpRblOeLCLD8aUp11aR952kQdj&sz=w1000" onclick="goHome()">
-    <div class="header-text">스토리가 있는 서오월간지</div>
+    <img src="https://drive.google.com/thumbnail?id=1lFUKv4ZpRblOeLCLD8aUp11aR952kQdj&sz=w1000">
+    <div class="header-text">스토리가 있는 서오 전문지</div>
   </div>
 
+  <!-- CONTENT -->
   <div class="content">
 
-    <div id="home" class="screen active">
-      <div class="grid">
+    <div class="grid">
 
-        <div class="card" onclick="openPDF()">
-          <div class="badge">최신호</div>
-          <img src="https://drive.google.com/thumbnail?id=1hk7NpBIfWI06E5XDO2oZi5J0ZSnydCk5&sz=w1000">
-          <p>2026년 5월호</p>
-        </div>
-
-        <div class="card" onclick="showComing()">
-          <div class="badge-coming">출간예정</div>
-          <img src="https://drive.google.com/thumbnail?id=1OSbIGt3ZwVDYecxrVhHrB_v8R-oVirsd&sz=w1000">
-          <p>2026년 6월호</p>
-        </div>
-
+      <!-- 2026년 5월 -->
+      <div class="card" onclick="location.href='2605.html'">
+        <div class="badge">최신호</div>
+        <img src="https://drive.google.com/thumbnail?id=1hk7NpBIfWI06E5XDO2oZi5J0ZSnydCk5&sz=w1000">
+        <p>2026년 5월호</p>
       </div>
-    </div>
 
-    <div id="viewer" class="screen">
-      <div class="viewer-container">
-        <div class="toolbar">
-          <button onclick="goHome()">⬅ 목록으로</button>
-        </div>
-        <iframe id="pdfFrame"></iframe>
+      <!-- 2026년 6월 -->
+      <div class="card" onclick="location.href='2606.html'">
+        <div class="badge-coming">출간예정</div>
+        <img src="https://drive.google.com/thumbnail?id=1OSbIGt3ZwVDYecxrVhHrB_v8R-oVirsd&sz=w1000">
+        <p>2026년 6월호</p>
       </div>
-    </div>
 
-    <div id="coming" class="screen">
-      <button onclick="goHome()">⬅ 목록으로</button>
-      <div style="margin-top:20px;">📢 Coming Soon</div>
     </div>
 
   </div>
 
+  <!-- FOOTER -->
   <div class="footer">
     <img src="https://drive.google.com/thumbnail?id=1Sr1eMqd6h21-HVOj93iMOohGJ1rAx3or&sz=w500">
 
-    <p>[02565] 서울시 동대문구 천호대로 145(용두동)</p>
-    <p>&nbsp;</p>
+    <p>[02565] 서오시 용산구 서오중앙로 34(서오동)</p>
 
     <p>
-      대표번호 : 02-2127-4114, 4300 (120 다산콜센터로 연결) |
-      02-2127-5000 (당직실 연결) |
-      02-2127-4000 (야간, 공휴일/당직실)
+      대표번호 : 02-1234-5678 |
+      02-0987-6543 |
+      02-0987-4321
     </p>
 
     <p>
-      FAX : 02-2127-5096 (종합상황실)
+      FAX : 02-1234-0987
     </p>
   </div>
 
 </div>
-
-<script>
-const fileId = "1S94VEwUqHhRLyCjxZpLcRbsL83ktm3xw";
-
-function openPDF() {
-  switchScreen("viewer");
-  document.getElementById("pdfFrame").src =
-    `https://drive.google.com/file/d/${fileId}/preview`;
-}
-
-function showComing() {
-  switchScreen("coming");
-}
-
-function goHome() {
-  switchScreen("home");
-  document.getElementById("pdfFrame").src = "";
-}
-
-function switchScreen(id) {
-  document.querySelectorAll(".screen").forEach(el => {
-    el.classList.remove("active");
-  });
-  document.getElementById(id).classList.add("active");
-}
-</script>
 
 </body>
 </html>
