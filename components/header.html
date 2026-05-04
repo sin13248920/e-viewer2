@@ -1,31 +1,48 @@
 <div class="header">
-  <img src="https://drive.google.com/thumbnail?id=1lFUKv4ZpRblOeLCLD8aUp11aR952kQdj&sz=w1000"
-       onclick="location.href='index.html'">
+  <div class="header-inner">
 
-  <div class="header-text">스토리가 있는 서오 전문지</div>
+    <div class="logo-group" onclick="location.href='index.html'">
+      <img src="https://drive.google.com/thumbnail?id=1lFUKv4ZpRblOeLCLD8aUp11aR952kQdj&sz=w1000">
+      <span class="header-title">스토리가 있는 서오 전문지</span>
+    </div>
+
+  </div>
 </div>
 
 <style>
 .header {
-  padding: 10px 20px;
+  width: 100%;
+  border-bottom: 1px solid #e5e5e5;
+  background: #fff;
+}
+
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 12px 20px;
+
+  display: flex;
+  align-items: center;
+}
+
+/* 로고 + 텍스트 묶음 */
+.logo-group {
   display: flex;
   align-items: center;
   gap: 10px;
-
-  /* ✔ 너무 강조 안되게 */
-  border-bottom: 1px solid #eee;
-}
-
-/* ✔ 로고 크기 더 축소 */
-.header img {
-  height: 32px;
   cursor: pointer;
 }
 
-/* ✔ 텍스트 안정화 */
-.header-text {
-  font-size: 13px;
-  color: #333;
-  font-weight: 500;
+/* 로고 */
+.logo-group img {
+  height: 34px;
+}
+
+/* 텍스트 */
+.header-title {
+  font-size: 14px;
+  color: #222;
+  font-weight: 600;
+  letter-spacing: 0.2px;
 }
 </style>
