@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026년 5월호</title>
+
+<style>
+html, body {
+  margin: 0;
+  height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f5f5f5;
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+.header {
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.header img {
+  height: 50px;
+  cursor: pointer;
+}
+
+.viewer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+iframe {
+  width: 90%;
+  height: 80vh;
+  border: none;
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+  <div class="header">
+    <img src="https://drive.google.com/thumbnail?id=1lFUKv4ZpRblOeLCLD8aUp11aR952kQdj&sz=w1000"
+         onclick="location.href='index.html'">
+  </div>
+
+  <div class="viewer">
+    <iframe src="https://drive.google.com/file/d/1S94VEwUqHhRLyCjxZpLcRbsL83ktm3xw/preview"></iframe>
+  </div>
+
+</div>
+
+</body>
+</html>
