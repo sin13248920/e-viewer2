@@ -9,28 +9,35 @@
 html, body {
   margin: 0;
   height: 100%;
-  font-family: 'Segoe UI', sans-serif;
   background: #f5f5f5;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 #app {
+  width: 100%;
   min-height: 100vh;
+  background: #fff;
   display: flex;
   flex-direction: column;
-  background: #fff;
 }
 
+/* HEADER (index 동일) */
 .header {
   padding: 10px 20px;
   border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.header button {
-  padding: 8px 12px;
-  border: none;
-  background: #e5e5e5;
-  border-radius: 6px;
+.header img {
+  height: 50px;
   cursor: pointer;
+}
+
+.header-text {
+  font-size: 14px;
+  color: black;
 }
 
 /* CENTER */
@@ -44,13 +51,22 @@ html, body {
   color: #666;
 }
 
-/* FOOTER */
+/* FOOTER (index 동일) */
 .footer {
   padding: 10px;
   background: #fafafa;
   border-top: 1px solid #ddd;
   font-size: 12px;
   text-align: center;
+}
+
+.footer p {
+  margin: 2px 0;
+}
+
+.footer img {
+  height: 30px;
+  margin-bottom: 5px;
 }
 </style>
 </head>
@@ -61,7 +77,9 @@ html, body {
 
   <!-- HEADER -->
   <div class="header">
-    <button onclick="location.href='index.html'">⬅ 목록으로</button>
+    <img src="https://drive.google.com/thumbnail?id=1lFUKv4ZpRblOeLCLD8aUp11aR952kQdj&sz=w1000"
+         onclick="location.href='index.html'">
+    <div class="header-text">스토리가 있는 서오 전문지</div>
   </div>
 
   <!-- CONTENT -->
@@ -71,9 +89,18 @@ html, body {
 
   <!-- FOOTER -->
   <div class="footer">
+    <img src="https://drive.google.com/thumbnail?id=1Sr1eMqd6h21-HVOj93iMOohGJ1rAx3or&sz=w500">
+
     <p>[02565] 서오시 용산구 서오중앙로 34(서오동)</p>
-    <p>대표번호 : 02-1234-5678 | 02-0987-6543 | 02-0987-4321</p>
-    <p>FAX : 02-1234-0987</p>
+    <p>&nbsp;</p>
+
+    <p>
+      대표번호 : 02-1234-5678, 8910 (서오출판사 콜센터) |
+      02-0987-6543 |
+      02-0987-4321
+    </p>
+
+    <p>FAX : 02-1234-0987 (종합상황실)</p>
   </div>
 
 </div>
