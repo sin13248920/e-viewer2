@@ -1,33 +1,45 @@
 <div class="footer">
-  <img src="https://drive.google.com/thumbnail?id=1Sr1eMqd6h21-HVOj93iMOohGJ1rAx3or&sz=w500">
+  <div class="footer-inner">
 
-  <p>[02565] 서오시 용산구 서오중앙로 34(서오동)</p>
-  <p>대표번호 : 02-1234-5678 | 02-0987-6543 | 02-0987-4321</p>
-  <p>FAX : 02-1234-0987</p>
+    <img class="footer-logo"
+         src="https://drive.google.com/thumbnail?id=1Sr1eMqd6h21-HVOj93iMOohGJ1rAx3or&sz=w500">
+
+    <div class="footer-text">
+      <p>[02565] 서오시 용산구 서오중앙로 34(서오동)</p>
+      <p>대표번호 : 02-1234-5678 | 02-0987-6543 | 02-0987-4321</p>
+      <p>FAX : 02-1234-0987</p>
+    </div>
+
+  </div>
 </div>
 
 <style>
 .footer {
-  padding: 20px 10px;
+  width: 100%;
+  border-top: 1px solid #e5e5e5;
+  background: #fff;
+}
 
-  /* ✔ 어두운 배경 */
-  background: #222;
-  color: #fff;
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 25px 20px;
 
   text-align: center;
+}
+
+/* 로고 */
+.footer-logo {
+  height: 26px;
+  margin-bottom: 12px;
+  opacity: 0.85;
+}
+
+/* 텍스트 */
+.footer-text p {
+  margin: 4px 0;
   font-size: 12px;
+  color: #666;
   line-height: 1.5;
-}
-
-/* ✔ 로고 줄임 */
-.footer img {
-  height: 24px;
-  margin-bottom: 8px;
-  opacity: 0.9;
-}
-
-/* ✔ 글 간격 안정 */
-.footer p {
-  margin: 3px 0;
 }
 </style>
