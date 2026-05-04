@@ -20,26 +20,6 @@ html, body {
   background: #fff;
 }
 
-/* HEADER */
-.header {
-  padding: 10px 20px;
-  border-bottom: 1px solid #ddd;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header img {
-  height: 40px;
-  cursor: pointer;
-}
-
-.header-text {
-  font-size: 14px;
-  color: black;
-}
-
-/* VIEWER */
 .viewer {
   flex: 1;
   display: flex;
@@ -52,23 +32,6 @@ iframe {
   height: 80vh;
   border: none;
 }
-
-/* FOOTER */
-.footer {
-  padding: 10px;
-  background: #fafafa;
-  border-top: 1px solid #ddd;
-  font-size: 12px;
-  text-align: center;
-}
-
-.footer p {
-  margin: 2px 0;
-}
-
-.footer img {
-  height: 28px;
-}
 </style>
 </head>
 
@@ -77,11 +40,7 @@ iframe {
 <div id="app">
 
   <!-- HEADER -->
-  <div class="header">
-    <img src="https://drive.google.com/thumbnail?id=1lFUKv4ZpRblOeLCLD8aUp11aR952kQdj&sz=w1000"
-         onclick="location.href='index.html'">
-    <div class="header-text">스토리가 있는 서오 전문지</div>
-  </div>
+  <div id="header"></div>
 
   <!-- VIEWER -->
   <div class="viewer">
@@ -89,15 +48,19 @@ iframe {
   </div>
 
   <!-- FOOTER -->
-  <div class="footer">
-    <img src="https://drive.google.com/thumbnail?id=1Sr1eMqd6h21-HVOj93iMOohGJ1rAx3or&sz=w500">
-
-    <p>[02565] 서오시 용산구 서오중앙로 34(서오동)</p>
-    <p>대표번호 : 02-1234-5678 | 02-0987-6543 | 02-0987-4321</p>
-    <p>FAX : 02-1234-0987</p>
-  </div>
+  <div id="footer"></div>
 
 </div>
+
+<script>
+fetch("components/header.html")
+  .then(r => r.text())
+  .then(d => document.getElementById("header").innerHTML = d);
+
+fetch("components/footer.html")
+  .then(r => r.text())
+  .then(d => document.getElementById("footer").innerHTML = d);
+</script>
 
 </body>
 </html>
