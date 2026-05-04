@@ -25,6 +25,7 @@ html, body {
   flex: 1;
 }
 
+/* 카드 영역 */
 .grid {
   display: flex;
   justify-content: center;
@@ -37,12 +38,16 @@ html, body {
 .card {
   width: 200px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: transform 0.2s ease;
   position: relative;
 }
 
 .card:hover {
   transform: scale(1.08);
+}
+
+.card:active {
+  transform: scale(0.97);
 }
 
 .card img {
@@ -52,8 +57,10 @@ html, body {
 
 .card p {
   text-align: center;
+  margin-top: 8px;
 }
 
+/* 배지 */
 .badge, .badge-coming {
   position: absolute;
   top: 10px;
@@ -67,7 +74,77 @@ html, body {
 .badge { background: red; }
 .badge-coming { background: gray; }
 
-/* HEADER + FOOTER 영역 삽입 위치 */
+/* 🔥 모바일 대응 */
+@media (max-width: 768px) {
+
+  .grid {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .card {
+    width: 80%;
+    max-width: 320px;
+  }
+
+}
+
+/* =========================
+   팝업 스타일
+========================= */
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+}
+
+.popup-box {
+  width: 90%;
+  max-width: 400px;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.popup-box img {
+  width: 100%;
+  display: block;
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.popup-actions button {
+  padding: 6px 12px;
+  border: none;
+  background: #333;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .popup-box {
+    max-width: 90%;
+  }
+}
 </style>
 </head>
 
@@ -104,16 +181,6 @@ html, body {
 
 </div>
 
-<script>
-fetch("components/header.html")
-  .then(r => r.text())
-  .then(d => document.getElementById("header").innerHTML = d);
-
-fetch("components/footer.html")
-  .then(r => r.text())
-  .then(d => document.getElementById("footer").innerHTML = d);
-</script>
-
 <!-- 팝업 -->
 <div id="popup" class="popup">
   <div class="popup-box">
@@ -132,104 +199,52 @@ fetch("components/footer.html")
   </div>
 </div>
 
-<style>
-/* 배경 */
-.popup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-
-  background: rgba(0,0,0,0.5);
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  z-index: 9999;
-}
-
-/* 팝업 박스 */
-.popup-box {
-  width: 90%;
-  max-width: 400px;
-  background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-
-  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-}
-
-/* 이미지 */
-.popup-box img {
-  width: 100%;
-  display: block;
-}
-
-/* 하단 버튼 영역 */
-.popup-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 10px 12px;
-  font-size: 13px;
-}
-
-/* 버튼 */
-.popup-actions button {
-  padding: 6px 12px;
-  border: none;
-  background: #333;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-/* 모바일 */
-@media (max-width: 480px) {
-  .popup-box {
-    max-width: 90%;
-  }
-}
-</style>
-
 <script>
+/* =========================
+   헤더 / 푸터 불러오기
+========================= */
+fetch("components/header.html")
+  .then(r => r.text())
+  .then(d => document.getElementById("header").innerHTML = d);
+
+fetch("components/footer.html")
+  .then(r => r.text())
+  .then(d => document.getElementById("footer").innerHTML = d);
+
+
+/* =========================
+   팝업 로직
+========================= */
 const popupKey = "popupHide";
 
-window.onload = function() {
-  const hide = localStorage.getItem(popupKey);
+/* 페이지 로드시 */
+window.addEventListener("load", () => {
+  const saved = localStorage.getItem(popupKey);
 
-  if (hide) {
-    document.getElementById("popup").style.display = "none";
+  if (saved) {
+    const now = new Date().getTime();
+
+    if (now < saved) {
+      document.getElementById("popup").style.display = "none";
+    } else {
+      localStorage.removeItem(popupKey);
+    }
   }
-};
+});
 
+/* 닫기 */
 function closePopup() {
   const checkbox = document.getElementById("todayClose");
 
   if (checkbox.checked) {
-    const now = new Date();
-    const tomorrow = new Date(now);
-    tomorrow.setDate(now.getDate() + 1);
+    const now = new Date().getTime();
+    const tomorrow = now + (24 * 60 * 60 * 1000);
 
-    localStorage.setItem(popupKey, tomorrow.getTime());
+    localStorage.setItem(popupKey, tomorrow);
   }
 
   document.getElementById("popup").style.display = "none";
 }
-
-// 하루 지나면 다시 표시
-(function() {
-  const saved = localStorage.getItem(popupKey);
-  if (saved) {
-    const now = new Date().getTime();
-    if (now > saved) {
-      localStorage.removeItem(popupKey);
-    }
-  }
-})();
 </script>
 
 </body>
