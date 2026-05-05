@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026년 5월호 뷰어</title>
+<title>2026년 5월호</title>
 
 <style>
 body {
@@ -27,20 +27,29 @@ body {
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  max-width: 900px;
+  max-width: 1000px;
   width: 100%;
+}
+
+/* 페이지 영역 */
+.page-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
 /* 캔버스 */
 canvas {
   width: 100%;
+  max-width: 48%;
   border-radius: 8px;
+  background: #fff;
 }
 
 /* 컨트롤 */
 .controls {
   text-align: center;
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .controls button {
@@ -50,12 +59,25 @@ canvas {
   background: #eee;
   border-radius: 6px;
   cursor: pointer;
+  transition: 0.2s;
+}
+
+.controls button:hover {
+  background: #ddd;
+}
+
+#pageInfo {
+  font-size: 14px;
 }
 
 /* 모바일 */
 @media (max-width: 768px) {
-  .viewer-card {
-    padding: 10px;
+  .page-container {
+    flex-direction: column;
+  }
+
+  canvas {
+    max-width: 100%;
   }
 }
 </style>
@@ -63,30 +85,35 @@ canvas {
 
 <body>
 
-<!-- 🔥 헤더 불러오기 -->
+<!-- 🔥 헤더 -->
 <div id="header"></div>
 
 <!-- 본문 -->
 <div class="viewer-wrapper">
   <div class="viewer-card">
-    <canvas id="pdfCanvas"></canvas>
+
+    <div class="page-container">
+      <canvas id="leftCanvas"></canvas>
+      <canvas id="rightCanvas"></canvas>
+    </div>
 
     <div class="controls">
       <button onclick="prevPage()">◀ 이전</button>
       <span id="pageInfo"></span>
       <button onclick="nextPage()">다음 ▶</button>
     </div>
+
   </div>
 </div>
 
-<!-- 🔥 푸터 불러오기 -->
+<!-- 🔥 푸터 -->
 <div id="footer"></div>
 
 <!-- PDF.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <script>
-/* 🔥 컴포넌트 로드 */
+/* 🔥 컴포넌트 불러오기 */
 fetch("components/header.html")
   .then(res => res.text())
   .then(data => document.getElementById("header").innerHTML = data);
@@ -95,23 +122,69 @@ fetch("components/footer.html")
   .then(res => res.text())
   .then(data => document.getElementById("footer").innerHTML = data);
 
-/* PDF 설정 */
+/* 🔥 PDF 설정 */
 const url = "https://raw.githubusercontent.com/sin13248920/weekly-seo-viewer/main/test01.pdf";
 
 let pdfDoc = null;
-let pageNum = 1;
+let currentPage = 1;
 
+/* 로드 */
 pdfjsLib.getDocument(url).promise.then(pdf => {
   pdfDoc = pdf;
-  renderPage(pageNum);
+  renderPages();
 });
 
-function renderPage(num) {
-  pdfDoc.getPage(num).then(page => {
-    const canvas = document.getElementById("pdfCanvas");
-    const ctx = canvas.getContext("2d");
+/* 렌더 */
+function renderPages() {
+  if (window.innerWidth < 768) {
+    renderSingle(currentPage);
+  } else {
+    if (currentPage === 1) {
+      renderSingle(1);
+    } else {
+      renderDouble(currentPage, currentPage + 1);
+    }
+  }
+}
 
+/* 단일 페이지 */
+function renderSingle(num) {
+  const left = document.getElementById("leftCanvas");
+  const right = document.getElementById("rightCanvas");
+
+  right.style.display = "none";
+
+  renderPageToCanvas(num, left);
+
+  document.getElementById("pageInfo").textContent =
+    `${num} / ${pdfDoc.numPages}`;
+}
+
+/* 두 페이지 */
+function renderDouble(leftNum, rightNum) {
+  const left = document.getElementById("leftCanvas");
+  const right = document.getElementById("rightCanvas");
+
+  right.style.display = "block";
+
+  renderPageToCanvas(leftNum, left);
+
+  if (rightNum <= pdfDoc.numPages) {
+    renderPageToCanvas(rightNum, right);
+  } else {
+    right.style.display = "none";
+  }
+
+  document.getElementById("pageInfo").textContent =
+    `${leftNum}-${Math.min(rightNum, pdfDoc.numPages)} / ${pdfDoc.numPages}`;
+}
+
+/* 공통 렌더 */
+function renderPageToCanvas(num, canvas) {
+  pdfDoc.getPage(num).then(page => {
+    const ctx = canvas.getContext("2d");
     const viewport = page.getViewport({ scale: 1.5 });
+
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
@@ -119,23 +192,37 @@ function renderPage(num) {
       canvasContext: ctx,
       viewport: viewport
     });
-
-    document.getElementById("pageInfo").textContent =
-      `${num} / ${pdfDoc.numPages}`;
   });
 }
 
+/* 다음 */
 function nextPage() {
-  if (pageNum >= pdfDoc.numPages) return;
-  pageNum++;
-  renderPage(pageNum);
+  if (window.innerWidth < 768) {
+    currentPage++;
+  } else {
+    if (currentPage === 1) currentPage = 2;
+    else currentPage += 2;
+  }
+
+  if (currentPage > pdfDoc.numPages) return;
+  renderPages();
 }
 
+/* 이전 */
 function prevPage() {
-  if (pageNum <= 1) return;
-  pageNum--;
-  renderPage(pageNum);
+  if (window.innerWidth < 768) {
+    currentPage--;
+  } else {
+    if (currentPage === 2) currentPage = 1;
+    else currentPage -= 2;
+  }
+
+  if (currentPage < 1) currentPage = 1;
+  renderPages();
 }
+
+/* 리사이즈 대응 */
+window.addEventListener("resize", renderPages);
 </script>
 
 </body>
