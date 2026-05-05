@@ -29,7 +29,7 @@ body {
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
   max-width: 1100px;
   width: 100%;
-  overflow: auto;
+  overflow: hidden;
 }
 
 /* 페이지 */
@@ -37,6 +37,7 @@ body {
   display: flex;
   justify-content: center;
   gap: 10px;
+  position: relative;
 }
 
 /* 캔버스 */
@@ -45,16 +46,21 @@ canvas {
   max-width: 48%;
   border-radius: 8px;
   background: #fff;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.35s ease, opacity 0.35s ease;
 }
 
-/* 애니메이션 */
-.page-enter {
-  transform: translateX(40px);
+/* 👉 넘김 애니메이션 */
+.slide-left-enter {
+  transform: translateX(80px);
   opacity: 0;
 }
 
-.page-active {
+.slide-right-enter {
+  transform: translateX(-80px);
+  opacity: 0;
+}
+
+.slide-active {
   transform: translateX(0);
   opacity: 1;
 }
@@ -94,7 +100,7 @@ canvas {
 
 <body>
 
-<!-- 🔥 헤더 -->
+<!-- 헤더 -->
 <div id="header"></div>
 
 <!-- 본문 -->
@@ -110,22 +116,18 @@ canvas {
       <button onclick="prevPage()">◀ 이전</button>
       <span id="pageInfo"></span>
       <button onclick="nextPage()">다음 ▶</button>
-      <br>
-      <button onclick="zoomOut()">➖ 축소</button>
-      <button onclick="zoomIn()">➕ 확대</button>
     </div>
 
   </div>
 </div>
 
-<!-- 🔥 푸터 -->
+<!-- 푸터 -->
 <div id="footer"></div>
 
-<!-- PDF.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <script>
-/* 🔥 컴포넌트 로드 */
+/* 🔥 컴포넌트 */
 fetch("components/header.html")
   .then(res => res.text())
   .then(data => document.getElementById("header").innerHTML = data);
@@ -134,29 +136,25 @@ fetch("components/footer.html")
   .then(res => res.text())
   .then(data => document.getElementById("footer").innerHTML = data);
 
-/* 🔥 PDF 설정 */
+/* PDF */
 const url = "https://raw.githubusercontent.com/sin13248920/weekly-seo-viewer/main/test01.pdf";
 
 let pdfDoc = null;
 let currentPage = 1;
-let scale = 1.5;
+let direction = "next"; // 👉 방향 기억
 
-/* 로드 */
 pdfjsLib.getDocument(url).promise.then(pdf => {
   pdfDoc = pdf;
   renderPages();
 });
 
-/* 렌더 분기 */
+/* 렌더 */
 function renderPages() {
   if (window.innerWidth < 768) {
     renderSingle(currentPage);
   } else {
-    if (currentPage === 1) {
-      renderSingle(1);
-    } else {
-      renderDouble(currentPage, currentPage + 1);
-    }
+    if (currentPage === 1) renderSingle(1);
+    else renderDouble(currentPage, currentPage + 1);
   }
 }
 
@@ -166,36 +164,31 @@ function renderSingle(num) {
   const right = document.getElementById("rightCanvas");
 
   right.style.display = "none";
-  renderPageToCanvas(num, left);
+  renderPage(num, left);
 
   document.getElementById("pageInfo").textContent =
     `${num} / ${pdfDoc.numPages}`;
 }
 
 /* 두 페이지 */
-function renderDouble(leftNum, rightNum) {
+function renderDouble(l, r) {
   const left = document.getElementById("leftCanvas");
   const right = document.getElementById("rightCanvas");
 
   right.style.display = "block";
 
-  renderPageToCanvas(leftNum, left);
-
-  if (rightNum <= pdfDoc.numPages) {
-    renderPageToCanvas(rightNum, right);
-  } else {
-    right.style.display = "none";
-  }
+  renderPage(l, left);
+  if (r <= pdfDoc.numPages) renderPage(r, right);
 
   document.getElementById("pageInfo").textContent =
-    `${leftNum}-${Math.min(rightNum, pdfDoc.numPages)} / ${pdfDoc.numPages}`;
+    `${l}-${Math.min(r, pdfDoc.numPages)} / ${pdfDoc.numPages}`;
 }
 
-/* 공통 렌더 */
-function renderPageToCanvas(num, canvas) {
+/* 페이지 렌더 */
+function renderPage(num, canvas) {
   pdfDoc.getPage(num).then(page => {
     const ctx = canvas.getContext("2d");
-    const viewport = page.getViewport({ scale: scale });
+    const viewport = page.getViewport({ scale: 1.5 });
 
     canvas.height = viewport.height;
     canvas.width = viewport.width;
@@ -205,29 +198,34 @@ function renderPageToCanvas(num, canvas) {
       viewport: viewport
     });
 
-    animateCanvas(canvas);
+    animate(canvas);
   });
 }
 
-/* 애니메이션 */
-function animateCanvas(canvas) {
-  canvas.classList.add("page-enter");
+/* 👉 애니메이션 */
+function animate(canvas) {
+  const enterClass = (direction === "next") 
+    ? "slide-left-enter" 
+    : "slide-right-enter";
+
+  canvas.classList.add(enterClass);
 
   setTimeout(() => {
-    canvas.classList.remove("page-enter");
-    canvas.classList.add("page-active");
+    canvas.classList.remove(enterClass);
+    canvas.classList.add("slide-active");
   }, 10);
 
   setTimeout(() => {
-    canvas.classList.remove("page-active");
-  }, 300);
+    canvas.classList.remove("slide-active");
+  }, 350);
 }
 
-/* 페이지 이동 */
+/* 이동 */
 function nextPage() {
-  if (window.innerWidth < 768) {
-    currentPage++;
-  } else {
+  direction = "next";
+
+  if (window.innerWidth < 768) currentPage++;
+  else {
     if (currentPage === 1) currentPage = 2;
     else currentPage += 2;
   }
@@ -237,9 +235,10 @@ function nextPage() {
 }
 
 function prevPage() {
-  if (window.innerWidth < 768) {
-    currentPage--;
-  } else {
+  direction = "prev";
+
+  if (window.innerWidth < 768) currentPage--;
+  else {
     if (currentPage === 2) currentPage = 1;
     else currentPage -= 2;
   }
@@ -248,18 +247,7 @@ function prevPage() {
   renderPages();
 }
 
-/* 확대 */
-function zoomIn() {
-  scale += 0.3;
-  renderPages();
-}
-
-function zoomOut() {
-  scale = Math.max(0.8, scale - 0.3);
-  renderPages();
-}
-
-/* 리사이즈 대응 */
+/* 반응형 */
 window.addEventListener("resize", renderPages);
 </script>
 
