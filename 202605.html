@@ -27,11 +27,12 @@ body {
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  max-width: 1000px;
+  max-width: 1100px;
   width: 100%;
+  overflow: auto;
 }
 
-/* 페이지 영역 */
+/* 페이지 */
 .page-container {
   display: flex;
   justify-content: center;
@@ -44,6 +45,18 @@ canvas {
   max-width: 48%;
   border-radius: 8px;
   background: #fff;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* 애니메이션 */
+.page-enter {
+  transform: translateX(40px);
+  opacity: 0;
+}
+
+.page-active {
+  transform: translateX(0);
+  opacity: 1;
 }
 
 /* 컨트롤 */
@@ -53,7 +66,7 @@ canvas {
 }
 
 .controls button {
-  margin: 0 10px;
+  margin: 5px;
   padding: 8px 14px;
   border: none;
   background: #eee;
@@ -64,10 +77,6 @@ canvas {
 
 .controls button:hover {
   background: #ddd;
-}
-
-#pageInfo {
-  font-size: 14px;
 }
 
 /* 모바일 */
@@ -101,6 +110,9 @@ canvas {
       <button onclick="prevPage()">◀ 이전</button>
       <span id="pageInfo"></span>
       <button onclick="nextPage()">다음 ▶</button>
+      <br>
+      <button onclick="zoomOut()">➖ 축소</button>
+      <button onclick="zoomIn()">➕ 확대</button>
     </div>
 
   </div>
@@ -113,7 +125,7 @@ canvas {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <script>
-/* 🔥 컴포넌트 불러오기 */
+/* 🔥 컴포넌트 로드 */
 fetch("components/header.html")
   .then(res => res.text())
   .then(data => document.getElementById("header").innerHTML = data);
@@ -127,6 +139,7 @@ const url = "https://raw.githubusercontent.com/sin13248920/weekly-seo-viewer/mai
 
 let pdfDoc = null;
 let currentPage = 1;
+let scale = 1.5;
 
 /* 로드 */
 pdfjsLib.getDocument(url).promise.then(pdf => {
@@ -134,7 +147,7 @@ pdfjsLib.getDocument(url).promise.then(pdf => {
   renderPages();
 });
 
-/* 렌더 */
+/* 렌더 분기 */
 function renderPages() {
   if (window.innerWidth < 768) {
     renderSingle(currentPage);
@@ -147,13 +160,12 @@ function renderPages() {
   }
 }
 
-/* 단일 페이지 */
+/* 단일 */
 function renderSingle(num) {
   const left = document.getElementById("leftCanvas");
   const right = document.getElementById("rightCanvas");
 
   right.style.display = "none";
-
   renderPageToCanvas(num, left);
 
   document.getElementById("pageInfo").textContent =
@@ -183,7 +195,7 @@ function renderDouble(leftNum, rightNum) {
 function renderPageToCanvas(num, canvas) {
   pdfDoc.getPage(num).then(page => {
     const ctx = canvas.getContext("2d");
-    const viewport = page.getViewport({ scale: 1.5 });
+    const viewport = page.getViewport({ scale: scale });
 
     canvas.height = viewport.height;
     canvas.width = viewport.width;
@@ -192,10 +204,26 @@ function renderPageToCanvas(num, canvas) {
       canvasContext: ctx,
       viewport: viewport
     });
+
+    animateCanvas(canvas);
   });
 }
 
-/* 다음 */
+/* 애니메이션 */
+function animateCanvas(canvas) {
+  canvas.classList.add("page-enter");
+
+  setTimeout(() => {
+    canvas.classList.remove("page-enter");
+    canvas.classList.add("page-active");
+  }, 10);
+
+  setTimeout(() => {
+    canvas.classList.remove("page-active");
+  }, 300);
+}
+
+/* 페이지 이동 */
 function nextPage() {
   if (window.innerWidth < 768) {
     currentPage++;
@@ -208,7 +236,6 @@ function nextPage() {
   renderPages();
 }
 
-/* 이전 */
 function prevPage() {
   if (window.innerWidth < 768) {
     currentPage--;
@@ -218,6 +245,17 @@ function prevPage() {
   }
 
   if (currentPage < 1) currentPage = 1;
+  renderPages();
+}
+
+/* 확대 */
+function zoomIn() {
+  scale += 0.3;
+  renderPages();
+}
+
+function zoomOut() {
+  scale = Math.max(0.8, scale - 0.3);
   renderPages();
 }
 
