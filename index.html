@@ -22,7 +22,7 @@
             padding-top: 60px;
         }
 
-        /* 고정된 헤더 스타일 (애니메이션 없음, 로고는 처음부터 살짝 옆에 위치) */
+        /* 고정된 헤더 스타일 (로고는 처음부터 살짝 옆에 위치, 애니메이션 없음) */
         header {
             position: fixed;
             top: 0;
@@ -92,10 +92,10 @@
             height: 100%;
             width: 0%;
             background-color: #0066cc;
-            transition: width 0.1s ease-out; /* 프로그래스 바만 부드럽게 추적 */
+            transition: width 0.1s ease-out; 
         }
 
-        /* 메인 래퍼 (좌측 유틸리티 바 + 본문) */
+        /* 메인 래퍼 (좌측 유틸리티 바 + 본문 배치용) */
         .page-wrapper {
             max-width: 900px;
             width: 100%;
@@ -224,27 +224,23 @@
             margin-bottom: 28px;
         }
 
-        /* 본문 중간 랜덤 광고 스타일 (각진 형태 유지) */
+        /* 본문 중간 광고 영역 (ad 폴더 랜덤 이미지용) */
         .ad-box {
             width: 100%;
             max-width: 450px;
             height: 220px;
             background-color: #fdfdfe;
+            color: #868e96;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             margin: 45px auto;
+            font-size: 14px;
+            font-weight: 600;
             border: 1px solid #d1d8dd;
             border-radius: 0;
             overflow: hidden;
-        }
-
-        .ad-box a {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         .ad-box img {
@@ -254,7 +250,7 @@
             display: block;
         }
 
-        /* 기자 프로필 영역 (컨테이너 없이 단순 구분선 스타일) */
+        /* 기자 프로필 영역 (단순 구분선 스타일) */
         .reporter-section {
             border-top: 1px solid #d1d8dd;
             border-bottom: 1px solid #d1d8dd;
@@ -456,7 +452,7 @@
         </div>
     </header>
 
-    <!-- 메인 래퍼 -->
+    <!-- 메인 래퍼 (좌측 유틸리티 바 + 본문) -->
     <div class="page-wrapper">
         <!-- 데스크톱 전용 왼쪽 유틸리티 바 -->
         <aside class="utility-sidebar">
@@ -490,9 +486,9 @@
                 
                 <p>전문가들은 이러한 기술 혁신이 업무 효율성을 극대화하는 동시에, 새로운 일자리 창출과 산업 구조의 재편을 가져올 것이라고 분석합니다. 하지만 동시에 데이터 프라이버시 문제나 일자리 대체에 대한 우려의 목소리도 적지 않게 나오고 있습니다.</p>
                 
-                <!-- 기사 중간 랜덤 광고 영역 (ad 폴더의 이미지가 무작위로 로드됨) -->
+                <!-- 기사 중간 광고 영역 (ad 폴더 무작위 이미지 출력) -->
                 <div class="ad-box">
-                    <a href="#" id="adLink" target="_blank">
+                    <a href="#" id="adLink" target="_blank" style="width:100%; height:100%;">
                         <img id="randomAdImage" src="" alt="추천 광고">
                     </a>
                 </div>
@@ -534,7 +530,7 @@
         </main>
     </div>
 
-    <!-- 푸터 영역 -->
+    <!-- 푸터 영역 (흰색 배경) -->
     <footer>
         <div class="footer-inner">
             <div class="footer-top">
@@ -559,9 +555,9 @@
         </div>
     </footer>
 
-    <!-- 스크립트 기능 (스크롤, 글자크기, 새창 인쇄, 본문 중간 광고 랜덤 생성) -->
+    <!-- 스크롤 및 기능 스크립트 -->
     <script>
-        // 스크롤 프로그레스 바 및 헤더 상태 감지
+        // 1. 스크롤 프로그레스 바 및 헤더 상태 감지
         window.addEventListener('scroll', function() {
             const header = document.getElementById('mainHeader');
             const progressBar = document.getElementById('progressBar');
@@ -579,7 +575,7 @@
             }
         });
 
-        // 글자 크기 조절 기능
+        // 2. 글자 크기 조절 기능
         let currentFontSize = 18;
         function changeFontSize(step) {
             currentFontSize += step * 2;
@@ -588,33 +584,7 @@
             document.getElementById('articleBody').style.fontSize = currentFontSize + 'px';
         }
 
-        // ad 폴더 이미지 무작위(랜덤) 생성 기능
-        function loadRandomAd() {
-            const adImages = [
-                "ad/jijak.jpg",
-                "ad/xi.jpg",
-                "ad/ad3.jpg",
-                "ad/ad4.jpg"
-            ];
-            
-            const adLinks = [
-                "https://www.army.mil.kr/sites/army/index.do",
-                "https://xi.co.kr/MDX",
-                "https://example.com/ad3",
-                "https://example.com/ad4"
-            ];
-
-            const randomIndex = Math.floor(Math.random() * adImages.length);
-            const imgElement = document.getElementById('randomAdImage');
-            const linkElement = document.getElementById('adLink');
-
-            if (imgElement && linkElement) {
-                imgElement.src = adImages[randomIndex];
-                linkElement.href = adLinks[randomIndex];
-            }
-        }
-
-        // 새 창 인쇄 기능
+        // 3. 새 창 인쇄 기능
         function openPrintWindow() {
             const printContent = document.querySelector('main').innerHTML;
             const printWindow = window.open('', '_blank', 'width=800,height=900');
@@ -655,7 +625,35 @@
             }, 200);
         }
 
-        // 페이지 로드 시 랜덤 광고 실행
+        // 4. ad 폴더 이미지 무작위 출력 기능
+        function loadRandomAd() {
+            // ad 폴더에 저장할 이미지 파일명을 배열에 등록해 주세요.
+            const adImages = [
+                "ad/jijak.jpg",
+                "ad/xi.jpg",
+                "ad/ad3.jpg",
+                "ad/ad4.jpg"
+            ];
+            
+            const adLinks = [
+                "https://www.army.mil.kr/sites/army/index.do",
+                "https://xi.co.kr/MDX",
+                "https://example.com/ad3",
+                "https://example.com/ad4"
+            ];
+
+            const randomIndex = Math.floor(Math.random() * adImages.length);
+
+            const imgElement = document.getElementById('randomAdImage');
+            const linkElement = document.getElementById('adLink');
+
+            if (imgElement && linkElement) {
+                imgElement.src = adImages[randomIndex];
+                linkElement.href = adLinks[randomIndex];
+            }
+        }
+
+        // 페이지 로딩 시 랜덤 광고 실행
         window.addEventListener('DOMContentLoaded', function() {
             loadRandomAd();
         });
