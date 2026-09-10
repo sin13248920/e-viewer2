@@ -22,7 +22,7 @@
             padding-top: 60px;
         }
 
-        /* 고정된 헤더 스타일 (로고는 처음부터 살짝 옆에 위치, 애니메이션 없음) */
+        /* 고정된 헤더 스타일 (애니메이션 없음, 로고는 처음부터 살짝 옆에 위치) */
         header {
             position: fixed;
             top: 0;
@@ -92,10 +92,10 @@
             height: 100%;
             width: 0%;
             background-color: #0066cc;
-            transition: width 0.1s ease-out; 
+            transition: width 0.1s ease-out; /* 프로그래스 바만 부드럽게 추적 */
         }
 
-        /* 메인 래퍼 (좌측 유틸리티 바 + 본문 배치용) */
+        /* 메인 래퍼 (좌측 유틸리티 바 + 본문) */
         .page-wrapper {
             max-width: 900px;
             width: 100%;
@@ -224,33 +224,37 @@
             margin-bottom: 28px;
         }
 
-        /* 본문 중간 광고 스타일 */
+        /* 본문 중간 랜덤 광고 스타일 (각진 형태 유지) */
         .ad-box {
             width: 100%;
             max-width: 450px;
             height: 220px;
             background-color: #fdfdfe;
-            color: #868e96;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             margin: 45px auto;
-            font-size: 14px;
-            font-weight: 600;
             border: 1px solid #d1d8dd;
             border-radius: 0;
-        }
-        
-        .ad-box span {
-            font-size: 11px;
-            color: #adb5bd;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            overflow: hidden;
         }
 
-        /* 기자 프로필 영역 */
+        .ad-box a {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ad-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* 기자 프로필 영역 (컨테이너 없이 단순 구분선 스타일) */
         .reporter-section {
             border-top: 1px solid #d1d8dd;
             border-bottom: 1px solid #d1d8dd;
@@ -486,14 +490,17 @@
                 
                 <p>전문가들은 이러한 기술 혁신이 업무 효율성을 극대화하는 동시에, 새로운 일자리 창출과 산업 구조의 재편을 가져올 것이라고 분석합니다. 하지만 동시에 데이터 프라이버시 문제나 일자리 대체에 대한 우려의 목소리도 적지 않게 나오고 있습니다.</p>
                 
+                <!-- 기사 중간 랜덤 광고 영역 (ad 폴더의 이미지가 무작위로 로드됨) -->
                 <div class="ad-box">
-                    <span>[AD]</span>
-                    광고 영역 (Sponsored)
+                    <a href="#" id="adLink" target="_blank">
+                        <img id="randomAdImage" src="" alt="추천 광고">
+                    </a>
                 </div>
 
                 <p>이에 대해 정부와 관련 업계는 AI 윤리 가이드라인을 강화하고, 기술 부작용을 최소화하기 위한 법적·제도적 장치 마련에 서두르고 있습니다. 앞으로 기술 발전과 인간의 삶이 조화를 이루는 지속 가능한 방향성을 찾는 것이 가장 중요한 과제로 남겨져 있습니다.</p>
             </div>
 
+            <!-- 기자 프로필 영역 (단순 구분선 스타일) -->
             <div class="reporter-section">
                 <img src="https://i.pravatar.cc/150?img=68" alt="기자 프로필 이미지" class="reporter-avatar">
                 <div class="reporter-info">
@@ -502,6 +509,7 @@
                 </div>
             </div>
 
+            <!-- 하단 위젯 광고 영역 -->
             <div class="widget-ads-container">
                 <div class="widget-ads-title">추천 광고 (Sponsored)</div>
                 <div class="widget-ads-grid">
@@ -551,8 +559,9 @@
         </div>
     </footer>
 
-    <!-- 스크롤 감지 및 기능 스크립트 -->
+    <!-- 스크립트 기능 (스크롤, 글자크기, 새창 인쇄, 본문 중간 광고 랜덤 생성) -->
     <script>
+        // 스크롤 프로그레스 바 및 헤더 상태 감지
         window.addEventListener('scroll', function() {
             const header = document.getElementById('mainHeader');
             const progressBar = document.getElementById('progressBar');
@@ -570,6 +579,7 @@
             }
         });
 
+        // 글자 크기 조절 기능
         let currentFontSize = 18;
         function changeFontSize(step) {
             currentFontSize += step * 2;
@@ -578,76 +588,77 @@
             document.getElementById('articleBody').style.fontSize = currentFontSize + 'px';
         }
 
-        // 새 창 인쇄 기능 구현
+        // ad 폴더 이미지 무작위(랜덤) 생성 기능
+        function loadRandomAd() {
+            const adImages = [
+                "ad/ad1.jpg",
+                "ad/ad2.jpg",
+                "ad/ad3.jpg",
+                "ad/ad4.jpg"
+            ];
+            
+            const adLinks = [
+                "https://example.com/ad1",
+                "https://example.com/ad2",
+                "https://example.com/ad3",
+                "https://example.com/ad4"
+            ];
+
+            const randomIndex = Math.floor(Math.random() * adImages.length);
+            const imgElement = document.getElementById('randomAdImage');
+            const linkElement = document.getElementById('adLink');
+
+            if (imgElement && linkElement) {
+                imgElement.src = adImages[randomIndex];
+                linkElement.href = adLinks[randomIndex];
+            }
+        }
+
+        // 새 창 인쇄 기능
         function openPrintWindow() {
             const printContent = document.querySelector('main').innerHTML;
-            const printWindow = window.open('', '_blank', 'width=850,height=900');
+            const printWindow = window.open('', '_blank', 'width=800,height=900');
             
             printWindow.document.write(`
                 <!DOCTYPE html>
                 <html lang="ko">
                 <head>
                     <meta charset="UTF-8">
-                    <title>데일리 뉴스 - 인쇄 미리보기</title>
+                    <title>인쇄 미리보기</title>
                     <style>
-                        * { margin: 0; padding: 0; box-sizing: border-box; }
-                        body { font-family: 'Pretendard', sans-serif; background-color: #fff; color: #222; padding-top: 60px; }
-                        
-                        /* 새 창 전용 헤더 (프로그레스 바 없음, 우측에 인쇄/취소 버튼) */
-                        .print-header {
-                            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
-                            background-color: #111111; display: flex; align-items: center; justify-content: space-between;
-                            padding: 0 30px; z-index: 1000;
+                        body {
+                            font-family: 'Pretendard', "Malgun Gothic", sans-serif;
+                            color: #000;
+                            line-height: 1.6;
+                            padding: 40px;
+                            max-width: 800px;
+                            margin: 0 auto;
                         }
-                        .print-logo { color: #fff; font-size: 17px; font-weight: 800; text-decoration: none; }
-                        .print-actions { display: flex; gap: 10px; }
-                        .print-action-btn {
-                            background-color: #333; color: #fff; border: 1px solid #555; padding: 6px 14px;
-                            font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 0;
-                        }
-                        .print-action-btn:hover { background-color: #0066cc; border-color: #0066cc; }
-
-                        /* 본문 래퍼 */
-                        .print-body-wrap { max-width: 760px; margin: 40px auto; padding: 0 20px; }
-
-                        /* 기존 스타일 계승 */
-                        .article-header { margin-bottom: 30px; border-bottom: 2px solid #111111; padding-bottom: 25px; }
-                        .article-category { font-size: 13px; color: #0066cc; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: inline-block; }
-                        .article-title { font-size: 32px; font-weight: 800; color: #111111; margin-bottom: 20px; line-height: 1.3; }
-                        .article-info { font-size: 13px; color: #777777; display: flex; justify-content: space-between; }
-                        .no-image-box { width: 100%; height: 350px; background-color: #f8f9fa; color: #adb5bd; display: flex; justify-content: center; align-items: center; font-size: 15px; margin-bottom: 40px; border: 1px solid #e1e4e8; }
-                        .article-content { font-size: 18px; color: #2c3e50; line-height: 1.85; margin-bottom: 40px; }
-                        .article-content p { margin-bottom: 28px; }
-                        .reporter-section { border-top: 1px solid #d1d8dd; border-bottom: 1px solid #d1d8dd; padding: 24px 0; margin: 40px 0; display: flex; align-items: center; }
-                        .reporter-avatar { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; margin-right: 20px; border: 1px solid #cbd5e1; }
-                        .reporter-info h3 { font-size: 16px; font-weight: 700; color: #111111; margin-bottom: 6px; }
-                        .reporter-info p { font-size: 14px; color: #555555; }
-
-                        /* 실제 종이 인쇄 시 헤더와 불필요한 요소 숨김 처리 */
-                        @media print {
-                            .print-header { display: none !important; }
-                            body { padding-top: 0 !important; }
-                            .ad-box, .widget-ads-container { display: none !important; }
+                        h1 { font-size: 24pt; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+                        p { font-size: 12pt; margin-bottom: 15px; }
+                        .ad-box, .widget-ads-container {
+                            display: none !important;
                         }
                     </style>
                 </head>
                 <body>
-                    <div class="print-header">
-                        <a href="#" class="print-logo">DAILY NEWS</a>
-                        <div class="print-actions">
-                            <button class="print-action-btn" onclick="window.print()">인쇄</button>
-                            <button class="print-action-btn" onclick="window.close()">취소</button>
-                        </div>
-                    </div>
-                    <div class="print-body-wrap">
-                        ${printContent}
-                    </div>
+                    ${printContent}
                 </body>
                 </html>
             `);
+            
             printWindow.document.close();
             printWindow.focus();
+            
+            setTimeout(function() {
+                printWindow.print();
+            }, 200);
         }
+
+        // 페이지 로드 시 랜덤 광고 실행
+        window.addEventListener('DOMContentLoaded', function() {
+            loadRandomAd();
+        });
     </script>
 
 </body>
