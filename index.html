@@ -1,251 +1,654 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>월간서오 e뷰어</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>데일리 뉴스 - 기사 상세</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<style>
-html, body {
-  margin: 0;
-  height: 100%;
-  background: #f5f5f5;
-  font-family: 'Segoe UI', sans-serif;
-}
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: #222222;
+            line-height: 1.8;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-top: 60px;
+        }
 
-#app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-}
+        /* 고정된 헤더 스타일 (로고는 처음부터 살짝 옆에 위치, 애니메이션 없음) */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #111111;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+        }
 
-/* CONTENT */
-.content {
-  flex: 1;
-}
+        .header-container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            height: 100%;
+        }
 
-/* 카드 영역 */
-.grid {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 60px;
-  min-height: 60vh;
-  padding: 40px 0 80px 0;
-}
+        .logo {
+            font-size: 17px;
+            font-weight: 800;
+            color: #ffffff;
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
 
-.card {
-  width: 200px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  position: relative;
-}
+        .header-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 450px;
+            opacity: 0;
+        }
 
-.card:hover {
-  transform: scale(1.08);
-}
+        header.scrolled .header-title {
+            opacity: 1;
+        }
 
-.card:active {
-  transform: scale(0.97);
-}
+        .scroll-progress-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 6px; 
+            background-color: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+        }
 
-.card img {
-  width: 100%;
-  border-radius: 10px;
-}
+        header.scrolled .scroll-progress-container {
+            opacity: 1;
+        }
 
-.card p {
-  text-align: center;
-  margin-top: 8px;
-}
+        .scroll-progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #0066cc;
+            transition: width 0.1s ease-out; 
+        }
 
-/* 배지 */
-.badge, .badge-coming {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  padding: 4px 8px;
-  font-size: 12px;
-  color: white;
-  border-radius: 8px;
-}
+        /* 메인 래퍼 (좌측 유틸리티 바 + 본문 배치용) */
+        .page-wrapper {
+            max-width: 900px;
+            width: 100%;
+            margin: 40px auto 80px auto;
+            padding: 0 20px;
+            display: flex;
+            position: relative;
+        }
 
-.badge { background: red; }
-.badge-coming { background: gray; }
+        /* 데스크톱 전용 왼쪽 유틸리티 바 */
+        .utility-sidebar {
+            position: sticky;
+            top: 90px;
+            height: fit-content;
+            width: 50px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-right: 40px;
+            flex-shrink: 0;
+        }
 
-/* 🔥 모바일 대응 */
-@media (max-width: 768px) {
+        .utility-container {
+            background-color: #ffffff;
+            border: 1px solid #d1d8dd;
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
 
-  .grid {
-    flex-direction: column;
-    gap: 30px;
-  }
+        .util-btn {
+            width: 36px;
+            height: 36px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #555555;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+        }
 
-  .card {
-    width: 80%;
-    max-width: 320px;
-  }
+        .util-btn:hover {
+            background-color: #f1f3f5;
+            color: #111111;
+        }
 
-}
+        .util-divider {
+            width: 24px;
+            height: 1px;
+            background-color: #e1e4e8;
+            margin: 4px 0;
+        }
 
-/* =========================
-   팝업 스타일
-========================= */
-.popup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
+        /* 메인 콘텐츠 영역 */
+        main {
+            flex: 1;
+            min-width: 0;
+        }
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+        /* 기사 헤더 */
+        .article-header {
+            margin-bottom: 30px;
+            border-bottom: 2px solid #111111;
+            padding-bottom: 25px;
+        }
 
-  z-index: 9999;
-}
+        .article-category {
+            font-size: 13px;
+            color: #0066cc;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
 
-.popup-box {
-  width: 90%;
-  max-width: 400px;
-  background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
+        .article-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #111111;
+            margin-bottom: 20px;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+        }
 
-  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-}
+        .article-info {
+            font-size: 13px;
+            color: #777777;
+            display: flex;
+            justify-content: space-between;
+        }
 
-.popup-box img {
-  width: 100%;
-  display: block;
-}
+        /* 이미지 없음 박스 스타일 */
+        .no-image-box {
+            width: 100%;
+            height: 400px;
+            background-color: #f8f9fa;
+            color: #adb5bd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            border: 1px solid #e1e4e8;
+            border-radius: 0;
+        }
 
-.popup-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+        /* 기사 본문 내용 */
+        .article-content {
+            font-size: 18px;
+            color: #2c3e50;
+            line-height: 1.85;
+            margin-bottom: 40px;
+        }
 
-  padding: 10px 12px;
-  font-size: 13px;
-}
+        .article-content p {
+            margin-bottom: 28px;
+        }
 
-.popup-actions button {
-  padding: 6px 12px;
-  border: none;
-  background: #333;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-}
+        /* 본문 중간 광고 스타일 */
+        .ad-box {
+            width: 100%;
+            max-width: 450px;
+            height: 220px;
+            background-color: #fdfdfe;
+            color: #868e96;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 45px auto;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid #d1d8dd;
+            border-radius: 0;
+        }
+        
+        .ad-box span {
+            font-size: 11px;
+            color: #adb5bd;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-@media (max-width: 480px) {
-  .popup-box {
-    max-width: 90%;
-  }
-}
-</style>
+        /* 기자 프로필 영역 */
+        .reporter-section {
+            border-top: 1px solid #d1d8dd;
+            border-bottom: 1px solid #d1d8dd;
+            padding: 24px 0;
+            margin: 40px 0 50px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .reporter-avatar {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 20px;
+            flex-shrink: 0;
+            border: 1px solid #cbd5e1;
+        }
+
+        .reporter-info h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111111;
+            margin-bottom: 6px;
+        }
+
+        .reporter-info p {
+            font-size: 14px;
+            color: #555555;
+            line-height: 1.5;
+        }
+
+        /* 하단 위젯 광고 영역 스타일 */
+        .widget-ads-container {
+            margin-top: 60px;
+            border-top: 2px solid #111111;
+            padding-top: 25px;
+        }
+
+        .widget-ads-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111111;
+            margin-bottom: 20px;
+        }
+
+        .widget-ads-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .widget-ad-item {
+            background-color: #ffffff;
+            border: 1px solid #d1d8dd;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: #333333;
+            border-radius: 0;
+        }
+
+        .widget-ad-item:hover {
+            border-color: #111111;
+        }
+
+        .widget-ad-thumb {
+            width: 100%;
+            height: 120px;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            color: #adb5bd;
+            border-bottom: 1px solid #e1e4e8;
+            border-radius: 0;
+        }
+
+        .widget-ad-text {
+            padding: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.45;
+            color: #111111;
+        }
+
+        /* 푸터 스타일 (흰색 배경) */
+        footer {
+            background-color: #ffffff;
+            border-top: 1px solid #d1d8dd;
+            padding: 40px 20px;
+            font-size: 13px;
+            color: #666666;
+            margin-top: auto;
+        }
+
+        .footer-inner {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .footer-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #d1d8dd;
+        }
+
+        .footer-logo {
+            font-size: 18px;
+            font-weight: 800;
+            color: #111111;
+            line-height: 1.2;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-info {
+            flex: 1;
+            line-height: 1.7;
+            color: #777777;
+            padding-left: 30px;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        .footer-copyright {
+            color: #999999;
+            font-size: 12px;
+        }
+
+        .family-site-select {
+            padding: 8px 14px;
+            font-size: 13px;
+            border: 1px solid #cbd5e1;
+            background-color: #ffffff;
+            color: #333333;
+            cursor: pointer;
+            width: 200px;
+            border-radius: 0;
+        }
+
+        /* 모바일 반응형 설정 */
+        @media (max-width: 768px) {
+            .utility-sidebar {
+                display: none;
+            }
+
+            .page-wrapper {
+                padding: 0 15px;
+            }
+
+            header.scrolled {
+                height: 95px;
+            }
+
+            header.scrolled .header-container {
+                flex-direction: column;
+                justify-content: center !important;
+                padding: 6px 15px;
+            }
+
+            header.scrolled .logo {
+                font-size: 16px;
+                margin-bottom: 2px;
+            }
+
+            header.scrolled .header-title {
+                position: static;
+                transform: none;
+                font-size: 12px;
+                max-width: 100%;
+                text-align: center;
+            }
+            
+            .widget-ads-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<div id="app">
+    <!-- 고정된 헤더 영역 -->
+    <header id="mainHeader">
+        <div class="header-container">
+            <a href="#" class="logo">DAILY NEWS</a>
+            <div class="header-title">인공지능 기술의 급격한 발전, 우리 일상의 미래는 어떻게 바뀔 것인가</div>
+        </div>
+        <div class="scroll-progress-container">
+            <div class="scroll-progress-bar" id="progressBar"></div>
+        </div>
+    </header>
 
-  <!-- HEADER -->
-  <div id="header"></div>
+    <!-- 메인 래퍼 -->
+    <div class="page-wrapper">
+        <!-- 데스크톱 전용 왼쪽 유틸리티 바 -->
+        <aside class="utility-sidebar">
+            <div class="utility-container">
+                <button class="util-btn" title="글자 키우기" onclick="changeFontSize(1)">A+</button>
+                <button class="util-btn" title="글자 줄이기" onclick="changeFontSize(-1)">A-</button>
+                <div class="util-divider"></div>
+                <button class="util-btn" title="인쇄하기" onclick="openPrintWindow()">🖨️</button>
+                <div class="util-divider"></div>
+                <button class="util-btn" title="공유하기" onclick="alert('기사 링크가 복사되었습니다.')">🔗</button>
+            </div>
+        </aside>
 
-  <!-- CONTENT -->
-  <div class="content">
+        <!-- 기사 본문 메인 영역 -->
+        <main>
+            <div class="article-header">
+                <span class="article-category">IT / 기술</span>
+                <h1 class="article-title">인공지능 기술의 급격한 발전, 우리 일상의 미래는 어떻게 바뀔 것인가</h1>
+                <div class="article-info">
+                    <span>입력 : 2026-06-07 14:30</span>
+                    <span>기자 : 김데일리 기자</span>
+                </div>
+            </div>
 
-    <div class="grid">
+            <div class="no-image-box">
+                이미지 없음
+            </div>
 
-      <div class="card" onclick="location.href='202605.html'">
-        <div class="badge">최신호</div>
-        <img src="https://drive.google.com/thumbnail?id=1hk7NpBIfWI06E5XDO2oZi5J0ZSnydCk5&sz=w1000">
-        <p>2026년 5월호</p>
-      </div>
+            <div class="article-content" id="articleBody">
+                <p>최근 인공지능(AI) 기술이 전례 없는 속도로 발전하면서 사회 각 분야에서 큰 변화를 이끌어내고 있습니다. 단순한 텍스트 생성을 넘어 이제는 복잡한 데이터 분석과 실시간 의사결정까지 AI가 깊숙이 관여하는 시대가 도래했습니다.</p>
+                
+                <p>전문가들은 이러한 기술 혁신이 업무 효율성을 극대화하는 동시에, 새로운 일자리 창출과 산업 구조의 재편을 가져올 것이라고 분석합니다. 하지만 동시에 데이터 프라이버시 문제나 일자리 대체에 대한 우려의 목소리도 적지 않게 나오고 있습니다.</p>
+                
+                <div class="ad-box">
+                    <span>[AD]</span>
+                    광고 영역 (Sponsored)
+                </div>
 
-      <div class="card" onclick="location.href='202606.html'">
-        <div class="badge-coming">출간예정</div>
-        <img src="https://drive.google.com/thumbnail?id=1OSbIGt3ZwVDYecxrVhHrB_v8R-oVirsd&sz=w1000">
-        <p>2026년 6월호</p>
-      </div>
+                <p>이에 대해 정부와 관련 업계는 AI 윤리 가이드라인을 강화하고, 기술 부작용을 최소화하기 위한 법적·제도적 장치 마련에 서두르고 있습니다. 앞으로 기술 발전과 인간의 삶이 조화를 이루는 지속 가능한 방향성을 찾는 것이 가장 중요한 과제로 남겨져 있습니다.</p>
+            </div>
 
+            <div class="reporter-section">
+                <img src="https://i.pravatar.cc/150?img=68" alt="기자 프로필 이미지" class="reporter-avatar">
+                <div class="reporter-info">
+                    <h3>김데일리 기자</h3>
+                    <p>IT 및 테크 산업 전반의 트렌드를 심층적으로 취재합니다. 정확하고 깊이 있는 정보 전달을 위해 늘 고민합니다.</p>
+                </div>
+            </div>
+
+            <div class="widget-ads-container">
+                <div class="widget-ads-title">추천 광고 (Sponsored)</div>
+                <div class="widget-ads-grid">
+                    <a href="#" class="widget-ad-item">
+                        <div class="widget-ad-thumb">이미지 없음</div>
+                        <div class="widget-ad-text">"이것 먹고 3주만에 15kg 감량..." 직장인들 난리난 비결</div>
+                    </a>
+                    <a href="#" class="widget-ad-item">
+                        <div class="widget-ad-thumb">이미지 없음</div>
+                        <div class="widget-ad-text">바르기만 해도 뱃살이 스르륵? 홈쇼핑 완판 대란의 정체</div>
+                    </a>
+                    <a href="#" class="widget-ad-item">
+                        <div class="widget-ad-thumb">이미지 없음</div>
+                        <div class="widget-ad-text">출처를 알 수 없는 탈모약, 의사들이 결국 폭발한 이유</div>
+                    </a>
+                    <a href="#" class="widget-ad-item">
+                        <div class="widget-ad-thumb">이미지 없음</div>
+                        <div class="widget-ad-text">하루 5분 이것만 했더니, 시력이 1.5로 기적의 부활?</div>
+                    </a>
+                </div>
+            </div>
+        </main>
     </div>
 
-  </div>
+    <!-- 푸터 영역 -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-top">
+                <div class="footer-logo">DAILY NEWS</div>
+                <div class="footer-info">
+                    주소: 서울특별시 중구 세종대로 123, 4층 | 대표번호: 02-123-4567 | 인터넷신문등록번호: 서울 아 00000<br>
+                    등록(발행)일자: 2026년 01월 01일 | 발행인: 홍길동 | 편집인: 김철수
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    Copyright &copy; Daily News All rights reserved. 무단 전재 및 재배포 금지.
+                </div>
+                <div class="footer-family">
+                    <select class="family-site-select" onchange="if(this.value) { window.open(this.value, '_blank'); this.value=''; }">
+                        <option value="">데일리뉴스 관계사</option>
+                        <option value="https://sin13248920.github.io/Seo-Architecture/">서오건축</option>
+                        <option value="https://sin13248920.github.io/weekly-seo-e-viewer/index.html">월간서오 e뷰어</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-  <!-- FOOTER -->
-  <div id="footer"></div>
+    <!-- 스크롤 감지 및 기능 스크립트 -->
+    <script>
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('mainHeader');
+            const progressBar = document.getElementById('progressBar');
+            
+            const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            
+            progressBar.style.width = scrolled + '%';
 
-</div>
+            if (winScroll > 150) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
 
-<!-- 팝업 -->
-<div id="popup" class="popup">
-  <div class="popup-box">
+        let currentFontSize = 18;
+        function changeFontSize(step) {
+            currentFontSize += step * 2;
+            if (currentFontSize < 14) currentFontSize = 14;
+            if (currentFontSize > 26) currentFontSize = 26;
+            document.getElementById('articleBody').style.fontSize = currentFontSize + 'px';
+        }
 
-    <img src="https://drive.google.com/thumbnail?id=1tVZH5nQd35ocOKUahALRxHuyL3qhh52F&sz=w1000">
+        // 새 창 인쇄 기능 구현
+        function openPrintWindow() {
+            const printContent = document.querySelector('main').innerHTML;
+            const printWindow = window.open('', '_blank', 'width=850,height=900');
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="ko">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>데일리 뉴스 - 인쇄 미리보기</title>
+                    <style>
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: 'Pretendard', sans-serif; background-color: #fff; color: #222; padding-top: 60px; }
+                        
+                        /* 새 창 전용 헤더 (프로그레스 바 없음, 우측에 인쇄/취소 버튼) */
+                        .print-header {
+                            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+                            background-color: #111111; display: flex; align-items: center; justify-content: space-between;
+                            padding: 0 30px; z-index: 1000;
+                        }
+                        .print-logo { color: #fff; font-size: 17px; font-weight: 800; text-decoration: none; }
+                        .print-actions { display: flex; gap: 10px; }
+                        .print-action-btn {
+                            background-color: #333; color: #fff; border: 1px solid #555; padding: 6px 14px;
+                            font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 0;
+                        }
+                        .print-action-btn:hover { background-color: #0066cc; border-color: #0066cc; }
 
-    <div class="popup-actions">
-      <label>
-        <input type="checkbox" id="todayClose">
-        오늘 하루 보지 않기
-      </label>
+                        /* 본문 래퍼 */
+                        .print-body-wrap { max-width: 760px; margin: 40px auto; padding: 0 20px; }
 
-      <button onclick="closePopup()">닫기</button>
-    </div>
+                        /* 기존 스타일 계승 */
+                        .article-header { margin-bottom: 30px; border-bottom: 2px solid #111111; padding-bottom: 25px; }
+                        .article-category { font-size: 13px; color: #0066cc; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: inline-block; }
+                        .article-title { font-size: 32px; font-weight: 800; color: #111111; margin-bottom: 20px; line-height: 1.3; }
+                        .article-info { font-size: 13px; color: #777777; display: flex; justify-content: space-between; }
+                        .no-image-box { width: 100%; height: 350px; background-color: #f8f9fa; color: #adb5bd; display: flex; justify-content: center; align-items: center; font-size: 15px; margin-bottom: 40px; border: 1px solid #e1e4e8; }
+                        .article-content { font-size: 18px; color: #2c3e50; line-height: 1.85; margin-bottom: 40px; }
+                        .article-content p { margin-bottom: 28px; }
+                        .reporter-section { border-top: 1px solid #d1d8dd; border-bottom: 1px solid #d1d8dd; padding: 24px 0; margin: 40px 0; display: flex; align-items: center; }
+                        .reporter-avatar { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; margin-right: 20px; border: 1px solid #cbd5e1; }
+                        .reporter-info h3 { font-size: 16px; font-weight: 700; color: #111111; margin-bottom: 6px; }
+                        .reporter-info p { font-size: 14px; color: #555555; }
 
-  </div>
-</div>
-
-<script>
-/* =========================
-   헤더 / 푸터 불러오기
-========================= */
-fetch("components/header.html")
-  .then(r => r.text())
-  .then(d => document.getElementById("header").innerHTML = d);
-
-fetch("components/footer.html")
-  .then(r => r.text())
-  .then(d => document.getElementById("footer").innerHTML = d);
-
-
-/* =========================
-   팝업 로직
-========================= */
-const popupKey = "popupHide";
-
-/* 페이지 로드시 */
-window.addEventListener("load", () => {
-  const saved = localStorage.getItem(popupKey);
-
-  if (saved) {
-    const now = new Date().getTime();
-
-    if (now < saved) {
-      document.getElementById("popup").style.display = "none";
-    } else {
-      localStorage.removeItem(popupKey);
-    }
-  }
-});
-
-/* 닫기 */
-function closePopup() {
-  const checkbox = document.getElementById("todayClose");
-
-  if (checkbox.checked) {
-    const now = new Date().getTime();
-    const tomorrow = now + (24 * 60 * 60 * 1000);
-
-    localStorage.setItem(popupKey, tomorrow);
-  }
-
-  document.getElementById("popup").style.display = "none";
-}
-</script>
+                        /* 실제 종이 인쇄 시 헤더와 불필요한 요소 숨김 처리 */
+                        @media print {
+                            .print-header { display: none !important; }
+                            body { padding-top: 0 !important; }
+                            .ad-box, .widget-ads-container { display: none !important; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-header">
+                        <a href="#" class="print-logo">DAILY NEWS</a>
+                        <div class="print-actions">
+                            <button class="print-action-btn" onclick="window.print()">인쇄</button>
+                            <button class="print-action-btn" onclick="window.close()">취소</button>
+                        </div>
+                    </div>
+                    <div class="print-body-wrap">
+                        ${printContent}
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.focus();
+        }
+    </script>
 
 </body>
 </html>
