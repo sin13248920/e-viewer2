@@ -22,7 +22,7 @@
             padding-top: 60px;
         }
 
-        /* 고정된 헤더 스타일 (로고는 처음부터 살짝 옆에 위치, 애니메이션 없음) */
+        /* 고정된 헤더 스타일 */
         header {
             position: fixed;
             top: 0;
@@ -95,7 +95,7 @@
             transition: width 0.1s ease-out; 
         }
 
-        /* 메인 래퍼 (좌측 유틸리티 바 + 본문 배치용) */
+        /* 메인 래퍼 */
         .page-wrapper {
             max-width: 900px;
             width: 100%;
@@ -163,7 +163,6 @@
             min-width: 0;
         }
 
-        /* 기사 헤더 */
         .article-header {
             margin-bottom: 30px;
             border-bottom: 2px solid #111111;
@@ -196,7 +195,6 @@
             justify-content: space-between;
         }
 
-        /* 이미지 없음 박스 스타일 */
         .no-image-box {
             width: 100%;
             height: 400px;
@@ -209,10 +207,8 @@
             font-weight: 600;
             margin-bottom: 40px;
             border: 1px solid #e1e4e8;
-            border-radius: 0;
         }
 
-        /* 기사 본문 내용 */
         .article-content {
             font-size: 18px;
             color: #2c3e50;
@@ -224,33 +220,38 @@
             margin-bottom: 28px;
         }
 
-        /* 본문 중간 광고 영역 (ad 폴더 랜덤 이미지용) */
+        /* 🖼️ 본문 중간 광고 영역 (이미지 비율 유지 및 잘림 방지 설정) */
         .ad-box {
             width: 100%;
-            max-width: 450px;
-            height: 220px;
-            background-color: #fdfdfe;
-            color: #868e96;
+            max-width: 600px; /* 광고 최대 너비 설정 */
+            height: 280px;   /* 광고 고정 높이 설정 */
+            background-color: #f1f3f5; /* 이미지가 작을 경우 채워질 배경색 */
+            margin: 45px auto;
+            border: 1px solid #d1d8dd;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            margin: 45px auto;
-            font-size: 14px;
-            font-weight: 600;
-            border: 1px solid #d1d8dd;
-            border-radius: 0;
             overflow: hidden;
         }
 
-        .ad-box img {
+        .ad-box a {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ad-box img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain; /* 핵심: 이미지가 잘리지 않고 비율을 유지하도록 설정 */
             display: block;
         }
 
-        /* 기자 프로필 영역 (단순 구분선 스타일) */
+        /* 기자 프로필 영역 */
         .reporter-section {
             border-top: 1px solid #d1d8dd;
             border-bottom: 1px solid #d1d8dd;
@@ -283,7 +284,7 @@
             line-height: 1.5;
         }
 
-        /* 하단 위젯 광고 영역 스타일 */
+        /* 하단 위젯 광고 영역 */
         .widget-ads-container {
             margin-top: 60px;
             border-top: 2px solid #111111;
@@ -311,7 +312,6 @@
             flex-direction: column;
             text-decoration: none;
             color: #333333;
-            border-radius: 0;
         }
 
         .widget-ad-item:hover {
@@ -328,7 +328,6 @@
             font-size: 12px;
             color: #adb5bd;
             border-bottom: 1px solid #e1e4e8;
-            border-radius: 0;
         }
 
         .widget-ad-text {
@@ -339,7 +338,7 @@
             color: #111111;
         }
 
-        /* 푸터 스타일 (흰색 배경) */
+        /* 푸터 영역 */
         footer {
             background-color: #ffffff;
             border-top: 1px solid #d1d8dd;
@@ -397,10 +396,9 @@
             color: #333333;
             cursor: pointer;
             width: 200px;
-            border-radius: 0;
         }
 
-        /* 모바일 반응형 설정 */
+        /* 모바일 반응형 */
         @media (max-width: 768px) {
             .utility-sidebar {
                 display: none;
@@ -452,7 +450,7 @@
         </div>
     </header>
 
-    <!-- 메인 래퍼 (좌측 유틸리티 바 + 본문) -->
+    <!-- 메인 래퍼 -->
     <div class="page-wrapper">
         <!-- 데스크톱 전용 왼쪽 유틸리티 바 -->
         <aside class="utility-sidebar">
@@ -486,9 +484,9 @@
                 
                 <p>전문가들은 이러한 기술 혁신이 업무 효율성을 극대화하는 동시에, 새로운 일자리 창출과 산업 구조의 재편을 가져올 것이라고 분석합니다. 하지만 동시에 데이터 프라이버시 문제나 일자리 대체에 대한 우려의 목소리도 적지 않게 나오고 있습니다.</p>
                 
-                <!-- 기사 중간 광고 영역 (ad 폴더 무작위 이미지 출력) -->
+                <!-- 기사 중간 광고 영역 (비율 유지 및 컨테이너 포함) -->
                 <div class="ad-box">
-                    <a href="#" id="adLink" target="_blank" style="width:100%; height:100%;">
+                    <a href="#" id="adLink" target="_blank">
                         <img id="randomAdImage" src="" alt="추천 광고">
                     </a>
                 </div>
@@ -496,7 +494,7 @@
                 <p>이에 대해 정부와 관련 업계는 AI 윤리 가이드라인을 강화하고, 기술 부작용을 최소화하기 위한 법적·제도적 장치 마련에 서두르고 있습니다. 앞으로 기술 발전과 인간의 삶이 조화를 이루는 지속 가능한 방향성을 찾는 것이 가장 중요한 과제로 남겨져 있습니다.</p>
             </div>
 
-            <!-- 기자 프로필 영역 (단순 구분선 스타일) -->
+            <!-- 기자 프로필 영역 -->
             <div class="reporter-section">
                 <img src="https://i.pravatar.cc/150?img=68" alt="기자 프로필 이미지" class="reporter-avatar">
                 <div class="reporter-info">
@@ -530,7 +528,7 @@
         </main>
     </div>
 
-    <!-- 푸터 영역 (흰색 배경) -->
+    <!-- 푸터 영역 -->
     <footer>
         <div class="footer-inner">
             <div class="footer-top">
@@ -555,7 +553,7 @@
         </div>
     </footer>
 
-    <!-- 스크롤 및 기능 스크립트 -->
+    <!-- 스크립트 영역 -->
     <script>
         // 1. 스크롤 프로그레스 바 및 헤더 상태 감지
         window.addEventListener('scroll', function() {
@@ -625,19 +623,18 @@
             }, 200);
         }
 
-        // 4. ad 폴더 이미지 무작위 출력 기능
+        // 4. ad 폴더 이미지 무작위 출력 기능 (jijak.jpg 및 육군본부 링크 적용)
         function loadRandomAd() {
-            // ad 폴더에 저장할 이미지 파일명을 배열에 등록해 주세요.
             const adImages = [
-                "ad/jijak.jpg",
-                "ad/xi.jpg",
+                "ad/jijak.jpg", // 수정된 첫 번째 광고 이미지
+                "ad/ad2.jpg",
                 "ad/ad3.jpg",
                 "ad/ad4.jpg"
             ];
             
             const adLinks = [
-                "https://www.army.mil.kr/sites/army/index.do",
-                "https://xi.co.kr/MDX",
+                "https://www.army.mil.kr/sites/army/index.do", // 수정된 첫 번째 광고 링크
+                "https://example.com/ad2",
                 "https://example.com/ad3",
                 "https://example.com/ad4"
             ];
